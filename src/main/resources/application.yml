@@ -1,0 +1,36 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/kafka
+      database: kafka
+  kafka:
+    bootstrap-servers: localhost:9092 # Kafka broker addresses
+    consumer:
+      group-id: my-group # Group ID for consumers
+      auto-offset-reset: earliest # Start consuming from the beginning if no offset is present
+      enable-auto-commit: true # Automatically commit offsets
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      properties:
+        isolation.level: read_committed # Handle transactional messages
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      retries: 3 # Retry sending messages in case of failure
+      acks: all # Wait for all replicas to acknowledge
+      compression-type: gzip # Compress messages to save bandwidth
+    listener:
+      missing-topics-fatal: false # Do not fail if a topic is missing
+    template:
+      default-topic: my-default-topic # Default topic for sending messages
+    admin:
+      client-id: admin-client # Admin client ID
+      properties:
+        retry.backoff.ms: 500 # Retry delay for admin operations
+
+server:
+  port: 8082
+
+logging:
+  level:
+    org.apache.kafka: INFO # Log level for Kafka client
