@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController("/appmodule")
 @CrossOrigin("*")
@@ -17,28 +18,25 @@ public class AppModuleController {
     AppModuleService appModuleService;
 
     @PostMapping("/save")
-    public ResponseEntity<AppModuleDto> save(@RequestBody AppModule appModule) {
-        return ResponseEntity.ok(appModuleService.save(appModule));
+    public AppModuleDto save(@RequestBody AppModule appModule) {
+        return appModuleService.save(appModule);
     }
 
     // Get all AppModules
     @GetMapping("/findAll")
-    public ResponseEntity<List<AppModuleDto>> findAll() {
-        return ResponseEntity.ok(appModuleService.findAll());
+    public List<AppModuleDto> findAll() {
+        return appModuleService.findAll();
     }
 
     // Get an AppModule by ID
     @GetMapping("/get/{id}")
-    public ResponseEntity<AppModuleDto> findById(@PathVariable String id) {
-        return appModuleService.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public Optional<AppModuleDto> findById(@PathVariable String id) {
+        return appModuleService.findById(id);
     }
 
     // Delete an AppModule by ID
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable String id) {
+    public void deleteById(@PathVariable String id) {
         appModuleService.deleteById(id);
-        return ResponseEntity.noContent().build();
     }
 }
