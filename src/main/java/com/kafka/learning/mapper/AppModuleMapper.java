@@ -11,7 +11,7 @@ import java.util.Optional;
 @Mapper
 public interface AppModuleMapper {
 
-    AppModuleMapper INSTANCE = Mappers.getMapper( AppModuleMapper.class );
+    AppModuleMapper INSTANCE = Mappers.getMapper(AppModuleMapper.class);
 
     AppModuleDto appModuleToAppModuleDto(AppModule appModule);
 

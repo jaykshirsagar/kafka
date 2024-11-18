@@ -16,19 +16,21 @@ public class AppModuleService {
     @Autowired
     AppModuleRepository appModuleRepository;
 
-    public AppModuleDto save(AppModule appModule) {
+    public AppModule save(AppModule appModule) {
         AppModuleDto appModuleDto = AppModuleMapper.INSTANCE.appModuleToAppModuleDto(appModuleRepository.save(appModule));
-        return appModuleDto;
+        return appModule;
     }
 
-    public List<AppModuleDto> findAll() {
-        List<AppModuleDto> appModuleDtoList = AppModuleMapper.INSTANCE.appModuleToAppModuleDto(appModuleRepository.findAll());
-        return appModuleDtoList;
+    public List<AppModule> findAll() {
+        List<AppModule> appModules = appModuleRepository.findAll();
+        List<AppModuleDto> appModuleDtoList = AppModuleMapper.INSTANCE.appModuleToAppModuleDto(appModules);
+        return appModules;
     }
 
-    public Optional<AppModuleDto> findById(String id) {
+    public Optional<AppModule> findById(String id) {
+        Optional<AppModule> appModules = appModuleRepository.findById(id);
         AppModuleDto appModuleDto = AppModuleMapper.INSTANCE.appModuleToAppModuleDto(appModuleRepository.findById(id));
-        return Optional.ofNullable(appModuleDto);
+        return appModules;
     }
 
     public void deleteById(String id) {
