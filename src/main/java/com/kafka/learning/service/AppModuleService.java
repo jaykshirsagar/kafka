@@ -29,7 +29,6 @@ public class AppModuleService {
 
     public Optional<AppModule> findById(String id) {
         Optional<AppModule> appModules = appModuleRepository.findById(id);
-        AppModuleDto appModuleDto = AppModuleMapper.INSTANCE.appModuleToAppModuleDto(appModuleRepository.findById(id));
         return appModules;
     }
 

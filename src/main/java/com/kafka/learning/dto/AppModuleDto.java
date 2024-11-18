@@ -8,8 +8,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 public class AppModuleDto {
     @JsonProperty("_id")
     private String id;
@@ -17,4 +15,13 @@ public class AppModuleDto {
     private String name;
     @JsonProperty("version")
     private String version;
+
+    public AppModuleDto() {
+    }
+
+    public AppModuleDto(String id, String name, String version) {
+        this.id = id;
+        this.name = name;
+        this.version = version;
+    }
 }
