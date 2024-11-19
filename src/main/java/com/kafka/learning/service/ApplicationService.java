@@ -1,5 +1,7 @@
 package com.kafka.learning.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kafka.learning.dto.AppModuleDto;
 import com.kafka.learning.dto.ApplicationDto;
 import com.kafka.learning.mapper.AppModuleMapper;
@@ -22,10 +24,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ApplicationService {
 
-    @NonNull
-    private ApplicationRepository applicationRepository;
-    @NonNull
-    private KafkaTemplate<String, ApplicationDto> kafkaTemplate;
+    final ApplicationRepository applicationRepository;
+    @Autowired
+    final KafkaTemplate<String, Object> kafkaTemplate;
+    final ObjectMapper objectMapper;
 
     public Application save(Application application) {
         ApplicationDto applicationDto = ApplicationMapper.INSTANCE.applicationToApplicationDto(applicationRepository.save(application));
@@ -49,7 +51,8 @@ public class ApplicationService {
     }
 
     @KafkaListener(topics = "application", groupId = "my-group")
-    public void listen(ApplicationDto applicationDto) {
-        System.out.println("Received message: " + applicationDto);
+    public void listen(String message) throws JsonProcessingException {
+        ApplicationDto applicationDto = objectMapper.readValue(message, ApplicationDto.class);
+        System.out.println("Received message: " + message);
     }
 }

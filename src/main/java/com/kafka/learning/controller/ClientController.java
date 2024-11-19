@@ -2,6 +2,7 @@ package com.kafka.learning.controller;
 
 import com.kafka.learning.model.Client;
 import com.kafka.learning.service.ClientService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,9 +11,9 @@ import java.util.Optional;
 
 @CrossOrigin
 @RestController
+@RequiredArgsConstructor
 public class ClientController {
-    @Autowired
-    ClientService clientService;
+    final ClientService clientService;
 
     @PostMapping("/clientSave")
     public Client save(@RequestBody Client Client) {

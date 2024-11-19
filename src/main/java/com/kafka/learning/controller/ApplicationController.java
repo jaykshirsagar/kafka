@@ -3,6 +3,7 @@ package com.kafka.learning.controller;
 import com.kafka.learning.model.AppModule;
 import com.kafka.learning.model.Application;
 import com.kafka.learning.service.ApplicationService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,9 +12,10 @@ import java.util.Optional;
 
 @CrossOrigin
 @RestController
+@RequiredArgsConstructor
 public class ApplicationController {
-    @Autowired
-    ApplicationService applicationService;
+
+    final ApplicationService applicationService;
 
     @PostMapping("/applicationSave")
     public Application save(@RequestBody Application application) {

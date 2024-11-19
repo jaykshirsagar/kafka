@@ -8,20 +8,14 @@ import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class AppModuleDto {
-    @JsonProperty("_id")
+    @JsonProperty("id")
     private String id;
     @JsonProperty("name")
     private String name;
     @JsonProperty("version")
     private String version;
 
-    public AppModuleDto() {
-    }
-
-    public AppModuleDto(String id, String name, String version) {
-        this.id = id;
-        this.name = name;
-        this.version = version;
-    }
 }

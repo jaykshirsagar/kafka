@@ -1,10 +1,13 @@
 package com.kafka.learning.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kafka.learning.dto.AppModuleDto;
 import com.kafka.learning.dto.ApplicationDto;
 import com.kafka.learning.mapper.AppModuleMapper;
 import com.kafka.learning.model.AppModule;
 import com.kafka.learning.repository.AppModuleRepository;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +21,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AppModuleService {
 
-    @NonNull
-    private AppModuleRepository appModuleRepository;
-    @NonNull
-    private KafkaTemplate<String, AppModuleDto> kafkaTemplate;
+    final AppModuleRepository appModuleRepository;
+    @Autowired
+    final KafkaTemplate<String, Object> kafkaTemplate;
+    final ObjectMapper objectMapper;
 
     public AppModule save(AppModule appModule) {
         AppModuleDto appModuleDto = AppModuleMapper.INSTANCE.appModuleToAppModuleDto(appModuleRepository.save(appModule));
@@ -45,7 +48,8 @@ public class AppModuleService {
     }
 
     @KafkaListener(topics = "module", groupId = "my-group")
-    public void listen(ApplicationDto applicationDto) {
-        System.out.println("Received message: " + applicationDto);
+    public void listen(String message) throws JsonProcessingException {
+        AppModuleDto appModuleDto = objectMapper.readValue(message, AppModuleDto.class);
+        System.out.println("Received message: " + message);
     }
 }
