@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ClientDto {
-    private String id;
+//    private String id;
     private String name;
     private List<Application> applications;
 }

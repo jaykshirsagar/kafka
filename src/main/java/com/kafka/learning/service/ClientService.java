@@ -30,7 +30,7 @@ public class ClientService {
     final ObjectMapper objectMapper;
 
     public Client save(Client client) {
-        ClientDto clientDto = ClientMapper.INSTANCE.clientToClientDto(clientRepository.save(client));
+        ClientDto clientDto = ClientMapper.INSTANCE.clientToClientDto(client);
         kafkaTemplate.send("clients", clientDto);
         return client;
     }
@@ -67,7 +67,20 @@ public class ClientService {
 
     @KafkaListener(topics = "clients", groupId = "my-group")
     public void listen(String message) throws JsonProcessingException {
-        ClientDto clientDto = objectMapper.readValue(message, ClientDto.class);
         System.out.println("Received message: " + message);
+        ClientDto clientDto = objectMapper.readValue(message, ClientDto.class);
+        Client client = ClientMapper.INSTANCE.clientDtoToClient(clientDto);
+        Optional<Client> existingClient = clientRepository.findByName(client.getName());
+        if (!existingClient.isPresent()) {
+            clientRepository.save(client);
+            System.out.println("Client added to the database: " + client.toString());
+        }
+        else if(!existingClient.equals(client))
+        {
+            client.setId(existingClient.get().getId());
+            clientRepository.save(client);
+            System.out.println("User updated");
+        }
+        else System.out.println("User already exist");
     }
 }
