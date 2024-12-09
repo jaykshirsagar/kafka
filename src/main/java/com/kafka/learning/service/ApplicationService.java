@@ -4,10 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kafka.learning.dto.AppModuleDto;
 import com.kafka.learning.dto.ApplicationDto;
+import com.kafka.learning.dto.ClientDto;
 import com.kafka.learning.mapper.AppModuleMapper;
 import com.kafka.learning.mapper.ApplicationMapper;
+import com.kafka.learning.mapper.ClientMapper;
 import com.kafka.learning.model.AppModule;
 import com.kafka.learning.model.Application;
+import com.kafka.learning.model.Client;
 import com.kafka.learning.repository.ApplicationRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -52,7 +55,20 @@ public class ApplicationService {
 
     @KafkaListener(topics = "application", groupId = "my-group")
     public void listen(String message) throws JsonProcessingException {
-        ApplicationDto applicationDto = objectMapper.readValue(message, ApplicationDto.class);
         System.out.println("Received message: " + message);
+        ApplicationDto applicationDto = objectMapper.readValue(message, ApplicationDto.class);
+        Application application = ApplicationMapper.INSTANCE.applicationDtoToApplication(applicationDto);
+        Optional<Application> existingApplication = applicationRepository.findByName(application.getName());
+        if (!existingApplication.isPresent()) {
+            applicationRepository.save(application);
+            System.out.println("Application added to the database: " + application.toString());
+        }
+        else if(!existingApplication.equals(application))
+        {
+            application.setId(existingApplication.get().getId());
+            applicationRepository.save(application);
+            System.out.println("Application updated");
+        }
+        else System.out.println("Application already exist");
     }
 }

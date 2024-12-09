@@ -16,7 +16,7 @@ public interface ApplicationMapper {
 
     ApplicationDto applicationToApplicationDto(Application application);
 
-    AppModule applicationDtoToApplication(ApplicationDto applicationDto);
+    Application applicationDtoToApplication(ApplicationDto applicationDto);
 
     List<ApplicationDto> applicationToApplicationDto(List<Application> application);
 }
