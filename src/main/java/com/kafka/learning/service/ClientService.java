@@ -2,19 +2,21 @@ package com.kafka.learning.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kafka.learning.dto.AppModuleDto;
 import com.kafka.learning.dto.ClientDto;
 import com.kafka.learning.mapper.ClientMapper;
 import com.kafka.learning.model.Client;
 import com.kafka.learning.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +25,8 @@ public class ClientService {
     final ClientRepository clientRepository;
     @Autowired
     final KafkaTemplate<String, Object> kafkaTemplate;
+    @Autowired
+    final KafkaConsumer<String, Object> kafkaConsumer;
     final ObjectMapper objectMapper;
 
     public Client save(Client client) {
@@ -44,6 +48,20 @@ public class ClientService {
 
     public void deleteById(String id) {
         clientRepository.deleteById(id);
+    }
+
+    public void getAllFromKafka()
+    {
+        kafkaConsumer.subscribe(Arrays.asList("clients"));
+
+        kafkaConsumer.seekToBeginning(kafkaConsumer.assignment());
+
+        ConsumerRecords<String, Object> records = kafkaConsumer.poll(10000);
+
+        for (ConsumerRecord<String, Object> record : records) {
+            System.out.println(record.value());
+        }
+
     }
 
     @KafkaListener(topics = "clients", groupId = "my-group")

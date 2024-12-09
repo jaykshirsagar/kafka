@@ -37,4 +37,10 @@ public class ClientController {
     public void deleteById(@PathVariable String id) {
         clientService.deleteById(id);
     }
+
+    @GetMapping("/getAllFromKafka")
+    public void getKafka()
+    {
+        clientService.getAllFromKafka();
+    }
 }
