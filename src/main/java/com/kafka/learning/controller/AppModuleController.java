@@ -1,7 +1,12 @@
 package com.kafka.learning.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kafka.learning.dto.AppModuleDto;
+import com.kafka.learning.dto.ClientDto;
+import com.kafka.learning.mapper.AppModuleMapper;
+import com.kafka.learning.mapper.ClientMapper;
 import com.kafka.learning.model.AppModule;
+import com.kafka.learning.model.Client;
 import com.kafka.learning.service.AppModuleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,5 +46,12 @@ public class AppModuleController {
     @DeleteMapping("/deleteModule/{id}")
     public void deleteById(@PathVariable String id) {
         appModuleService.deleteById(id);
+    }
+
+    @GetMapping("/getModuleFromPartition/{id}/{partition}")
+    public List<AppModule> getModuleFromPartition(@PathVariable int id, @PathVariable int partition) throws JsonProcessingException {
+        List<AppModuleDto> appModuleDtoList = appModuleService.getFromPartition(id,partition);
+        List<AppModule> appModules = AppModuleMapper.INSTANCE.appModuleDtoToAppModule(appModuleDtoList);
+        return appModules;
     }
 }

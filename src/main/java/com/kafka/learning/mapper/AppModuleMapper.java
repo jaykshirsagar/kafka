@@ -19,4 +19,6 @@ public interface AppModuleMapper {
 
     List<AppModuleDto> appModuleToAppModuleDto(List<AppModule> appModule);
 
+    List<AppModule> appModuleDtoToAppModule(List<AppModuleDto> appModuleDto);
+
 }
