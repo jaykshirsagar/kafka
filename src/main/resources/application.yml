@@ -17,7 +17,7 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
       retries: 3 # Retry sending messages in case of failure
-      acks: all # Wait for all replicas to acknowledge
+      acks: 1 # Wait for all replicas to acknowledge
       compression-type: gzip # Compress messages to save bandwidth
     listener:
       missing-topics-fatal: false # Do not fail if a topic is missing

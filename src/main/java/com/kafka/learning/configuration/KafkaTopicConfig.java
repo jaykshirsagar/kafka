@@ -34,9 +34,8 @@ public class KafkaTopicConfig {
     @Bean
     public NewTopic clientTopic() {
         return TopicBuilder.name("client")
-                .partitions(15)
-                .replicas(2)
-                .config(TopicConfig.RETENTION_MS_CONFIG,"1680000")
+                .partitions(30)
+                .replicas(3)
                 .build();
     }
 }

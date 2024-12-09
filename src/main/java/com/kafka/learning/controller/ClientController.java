@@ -1,5 +1,8 @@
 package com.kafka.learning.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.kafka.learning.dto.ClientDto;
+import com.kafka.learning.mapper.ClientMapper;
 import com.kafka.learning.model.Client;
 import com.kafka.learning.service.ClientService;
 import lombok.RequiredArgsConstructor;
@@ -39,8 +42,9 @@ public class ClientController {
     }
 
     @GetMapping("/getAllFromKafka")
-    public void getKafka()
-    {
-        clientService.getAllFromKafka();
+    public List<Client> getKafka() throws JsonProcessingException {
+       List<ClientDto> clientDtoList = clientService.getAllFromKafka();
+       List<Client> clients = ClientMapper.INSTANCE.clientDtoToClient(clientDtoList);
+       return clients;
     }
 }

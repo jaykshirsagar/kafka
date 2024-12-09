@@ -50,18 +50,19 @@ public class ClientService {
         clientRepository.deleteById(id);
     }
 
-    public void getAllFromKafka()
-    {
+    public List<ClientDto> getAllFromKafka() throws JsonProcessingException {
+        List<ClientDto> clientDtoList = new ArrayList<>();
         kafkaConsumer.subscribe(Arrays.asList("clients"));
 
         kafkaConsumer.seekToBeginning(kafkaConsumer.assignment());
 
-        ConsumerRecords<String, Object> records = kafkaConsumer.poll(10000);
+        ConsumerRecords<String, Object> records = kafkaConsumer.poll(5000);
 
         for (ConsumerRecord<String, Object> record : records) {
-            System.out.println(record.value());
+            System.out.println(record.value().toString());
+            clientDtoList.add(objectMapper.readValue(record.value().toString(),ClientDto.class));
         }
-
+        return clientDtoList;
     }
 
     @KafkaListener(topics = "clients", groupId = "my-group")
