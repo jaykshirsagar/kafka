@@ -7,7 +7,9 @@ import com.kafka.learning.dto.AppModuleDto;
 import com.kafka.learning.dto.ApplicationDto;
 import com.kafka.learning.dto.ClientDto;
 import com.kafka.learning.mapper.AppModuleMapper;
+import com.kafka.learning.mapper.ApplicationMapper;
 import com.kafka.learning.model.AppModule;
+import com.kafka.learning.model.Application;
 import com.kafka.learning.repository.AppModuleRepository;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -38,7 +40,7 @@ public class AppModuleService {
     final ObjectMapper objectMapper;
 
     public AppModule save(AppModule appModule) {
-        AppModuleDto appModuleDto = AppModuleMapper.INSTANCE.appModuleToAppModuleDto(appModuleRepository.save(appModule));
+        AppModuleDto appModuleDto = AppModuleMapper.INSTANCE.appModuleToAppModuleDto(appModule);
         kafkaTemplate.send("module", appModuleDto);
         return appModule;
     }
@@ -75,7 +77,20 @@ public class AppModuleService {
 
     @KafkaListener(topics = "module", groupId = "my-group")
     public void listen(String message) throws JsonProcessingException {
-        AppModuleDto appModuleDto = objectMapper.readValue(message, AppModuleDto.class);
         System.out.println("Received message: " + message);
+        AppModuleDto appModuleDto = objectMapper.readValue(message, AppModuleDto.class);
+        AppModule appModule = AppModuleMapper.INSTANCE.appModuleDtoToAppModule(appModuleDto);
+        Optional<AppModule> existingModule = appModuleRepository.findByName(appModule.getName());
+        if (!existingModule.isPresent()) {
+            appModuleRepository.save(appModule);
+            System.out.println("Module added to the database: " + appModule.toString());
+        }
+        else if(!existingModule.equals(appModule))
+        {
+            appModule.setId(existingModule.get().getId());
+            appModuleRepository.save(appModule);
+            System.out.println("Module updated");
+        }
+        else System.out.println("Module already exist");
     }
 }

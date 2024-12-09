@@ -33,7 +33,7 @@ public class ApplicationService {
     final ObjectMapper objectMapper;
 
     public Application save(Application application) {
-        ApplicationDto applicationDto = ApplicationMapper.INSTANCE.applicationToApplicationDto(applicationRepository.save(application));
+        ApplicationDto applicationDto = ApplicationMapper.INSTANCE.applicationToApplicationDto(application);
         kafkaTemplate.send("application", applicationDto);
         return application;
     }
